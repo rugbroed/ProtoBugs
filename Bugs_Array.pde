@@ -1,7 +1,11 @@
 // **************************************************
 // ****               PROTO BUGS                 ****
 // ****                                          ****
-// ****  Totally free source code. Have fun!     ****
+// ****  Totally free source code, originally    ****
+// ****  made as an inspiration for a course     **** 
+// ****  on interactivity at IT-University of    ****
+// ****  Copenhagen by kben@itu.dk.              ****
+// ****                                          ****
 // **************************************************
 
 import java.util.Iterator;
@@ -42,6 +46,20 @@ void setup() {
   makeWorld();
 }
 
+void mousePressed() {
+  int x = int(mouseY / tileSize);
+  int y = int(mouseX / tileSize);
+  
+  println("x: " + x + ", y: " + y);
+  
+  Tile tile = world[y][x];
+  Bug bug = new Bug(tile);
+  bugs.add(bug);
+
+  tile.bugArrives(bug);
+  tile.display();
+}
+
 void draw() {
   moveBugs();
 }
@@ -70,6 +88,7 @@ void initializeWorld() {
     for (int x = 0; x < canvasX; x++) {
       
       Tile tile = new Tile(y, x);
+      //Tile tile = new Tile();
       world[y][x] = tile;
       
       tile.display();
@@ -102,14 +121,17 @@ void placeBugs() {
     
     if (tile.getFood() == null && tile.getBug() == null) {
       Bug bug = new Bug(tile);
+      
       bug.setTile(tile);
       bugs.add(bug);
-      
+  
       world[y][x].bugArrives(bug);
+      
       bugsPlaced++;
     }
   }
 }
+
 
 void moveBugs() {
   ArrayList deadBugs = new ArrayList();
@@ -206,7 +228,7 @@ class CanvasPosition {
 public class Tile {
   Food food = null;
   Bug bug = null;
-  
+
   int col, row;
 
   Tile(int col, int row) {
