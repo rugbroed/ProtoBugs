@@ -26,19 +26,23 @@
 // ****       randomly (energy: a random number  ****
 // ****       between 1 and 200). Food is        ****
 // ****       'green'                            ****
-// ****    -  Bugs can be manually placed by     ****
-// ****       clicking with the mouse.           ****
 // ****    -  When two bugs are at the same tile ****
 // ****       and they got enough energy, they   ****
 // ****       will produce ofspring, spawning a  ****
 // ****       new bug and decreasing energy from ****
-// ****       the parent bugs.                   ****
+// ****       the parent bugs. Baby bugs are     ****
+// ****       blue.                              ****
+// ****    -  Baby bugs can be manually placed   **** 
+// ****       by clicking with the mouse.        ****
 // ****                                          ****
 // ****  Features suggestions:                   ****
 // ****                                          ****
 // ****    1. Bugs should learn about their      ****
 // ****       surroundings, and incorporate      ****
 // ****       this in their DNA.                 ****
+// ****                                          ****
+// ****    2. Food is seeded randomly acoording  ****
+// ****       to variable settings.              ****
 // ****                                          ****
 // ****                                          ****
 // **************************************************
@@ -73,7 +77,7 @@ void mousePressed() {
   int y = int(mouseX / tileSize);
   
   Tile tile = world.getTile(y, x);
-  world.addNewBug(tile);
+  world.addNewBug(tile, true);
 }
 
 void draw() {
@@ -183,7 +187,13 @@ public class Tile {
         fill(255, 0, 0);
       }
       else {
-       fill(255, 255, 255); 
+        if (bug.isBaby()) {
+          //fill(255, 182, 193);
+          fill(0, 0, 255);
+        }
+        else {
+          fill(255, 255, 255);
+        }        
       }
     } 
     else {
@@ -277,8 +287,18 @@ public class Bug {
   
   Tile tile;
   
+  int numberOfMovesToStayBaby = 0;
+  
   Bug(Tile tile) {
     this.tile = tile;
+  }
+  
+  public void setNumberOfMovesToStayBaby(int numberOfMovesToStayBaby) {
+    this.numberOfMovesToStayBaby = numberOfMovesToStayBaby;
+  }
+  
+  public boolean isBaby() {
+    return (this.numberOfMovesToStayBaby > 0);
   }
 
   public void consume(Food food) {
@@ -365,7 +385,6 @@ public class Bug {
     tile.bugLeaves(this);
     tile.display();
     
-    //tile = world[cp.getY()][cp.getX()];
     tile = world.getTile(cp.getY(), cp.getX());
     tile.bugArrives(this);
 
@@ -374,6 +393,10 @@ public class Bug {
       tile.setFood(null);
     }
     
+    if (numberOfMovesToStayBaby > 0) {
+      numberOfMovesToStayBaby--;
+    }
+
     tile.display();
     
     setTile(tile);
@@ -397,12 +420,19 @@ public class World {
   Tile[][] world = new Tile[canvasY][canvasX];
   ArrayList bugs = new ArrayList();
   
-  public void addNewBug(Tile tile) {
+  public Bug addNewBug(Tile tile, boolean asBaby) {
     Bug bug = new Bug(tile);
+    
+    if (asBaby) {
+      bug.setNumberOfMovesToStayBaby(50);
+    }      
+    
     bugs.add(bug);
   
     tile.bugArrives(bug);
     tile.display();
+    
+    return bug;
   }
   
   void initializeWorld() {
@@ -506,9 +536,9 @@ public class World {
           bug1.substractEnergy(50);
           bug2.substractEnergy(50);
           
-          println("A new bug was born!");
+          addNewBug(bug.getTile(), true);
           
-          addNewBug(bug.getTile());
+          println("A new bug was born!");
         }
       }
     }
