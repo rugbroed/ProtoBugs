@@ -75,7 +75,6 @@ void mousePressed() {
   int x = int(mouseY / tileSize);
   int y = int(mouseX / tileSize);
   
-  //Tile tile = world[y][x];
   Tile tile = world.getTile(y, x);
   world.addNewBug(tile);
 }
@@ -145,8 +144,6 @@ class CanvasPosition {
 
 public class Tile {
   Food food = null;
-  //Bug bug = null;
-  
   ArrayList bugs = new ArrayList();
 
   int col, row;
@@ -164,15 +161,8 @@ public class Tile {
     return food;
   }
 
-/*
-  public void setBug(Bug bug) {
-    this.bug = bug;
-  }
-  */
-
   public Bug getBug(int number) {
     return (Bug) this.bugs.get(number);
-    //return bug;
   }
   
   public int getNumberOfBugs() {
@@ -180,10 +170,8 @@ public class Tile {
   }
   
   public void bugLeaves(Bug bug) {
-    //this.bugs.remove(number);
     bug.setTile(null);
     this.bugs.remove(bug);
-    //this.bug = null;
   }
   
   public void bugArrives(Bug bug) {
@@ -240,7 +228,6 @@ class Move {
 
   Move() {
     direction = int(random(8) + 1);
-    //direction = 1;
   }
 
   public boolean isReversed(Move move) {
