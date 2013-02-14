@@ -1,10 +1,48 @@
 // **************************************************
 // ****               PROTO BUGS                 ****
 // ****                                          ****
-// ****  Totally free source code, originally    ****
-// ****  made as an inspiration for a course     **** 
-// ****  on interactivity at IT-University of    ****
-// ****  Copenhagen by kben@itu.dk.              ****
+// ****  Proto Bugs is free for non-commercial   ****
+// ****  use and further development. If you     ****
+// ****  like the idea, please help make it      ****
+// ****  better.                                 ****
+// ****                                          ****
+// ****  Proto Bugs was originally made as an    ****
+// ****  inspiration for the students at a       ****
+// ****  course on interactivity at the          ****
+// ****  IT-University of Copenhagen             ****
+// ****  by kben@itu.dk.                         ****
+// ****                                          ****
+// ****  Current functionality                   ****
+// ****                                          ****
+// ****    -  Bugs are initialized and move      ****
+// ****       around randomly (energy: 100).     ****
+// ****    -  Bugs are 'white' if they have      ****
+// ****       plenty of energy (> 0). If their   ****
+// ****       energy levels drop below 0, they   ****
+// ****       are 'red'. If the energy level     ****
+// ****       drops below -50 they die, and      ****
+// ****       they turn into food.               ****
+// ****    -  Food are initialized and placed    ****
+// ****       randomly (energy: a random number  ****
+// ****       between 1 and 200). Food is        ****
+// ****       'green'                            ****
+// ****    -  Bugs can be manually placed by     ****
+// ****       clicking with the mouse.           ****
+// ****                                          ****
+// ****  Features suggestions:                   ****
+// ****                                          ****
+// ****    1. Bugs should learn about their      ****
+// ****       surroundings, and incorporate      ****
+// ****       this in their DNA.                 ****
+// ****                                          ****
+// ****    2. If two bugs are at the same tile   ****
+// ****       and they energy levels are above   ****
+// ****       200 they should produce ofspring   ****
+// ****       and each should decrease 50 in     ****
+// ****       energy.                            ****
+// ****                                          ****
+// ****                                          ****
+// ****                                          ****
 // ****                                          ****
 // **************************************************
 
@@ -19,7 +57,7 @@ int canvasX = 100;
 int canvasY = 100;
 int tileSize = 10;
 int initialize_FOOD_AMOUNT = 200;
-int initialize_BUGS_AMOUNT = 50;
+int initialize_BUGS_AMOUNT = 250;
 
 // Huge setup
 /*
@@ -49,8 +87,6 @@ void setup() {
 void mousePressed() {
   int x = int(mouseY / tileSize);
   int y = int(mouseX / tileSize);
-  
-  println("x: " + x + ", y: " + y);
   
   Tile tile = world[y][x];
   Bug bug = new Bug(tile);
@@ -84,6 +120,7 @@ void renderTiles() {
 }
 
 void initializeWorld() {
+  print("Initializing world...");
   for (int y = 0; y < canvasY; y++) {
     for (int x = 0; x < canvasX; x++) {
       
@@ -94,9 +131,11 @@ void initializeWorld() {
       tile.display();
     }
   }
+  println("DONE.");
 }
 
 void placeFood() {
+  print("Placing food...");
   int foodPlaced = 0;
   
   while (foodPlaced < initialize_FOOD_AMOUNT) {
@@ -109,9 +148,12 @@ void placeFood() {
       foodPlaced++;
     }
   }
+  println("DONE.");
 }
 
 void placeBugs() {
+  print("Placing bugs...");
+  
   int bugsPlaced = 0;
   while (bugsPlaced < initialize_BUGS_AMOUNT) {
     int y = int(random(canvasY));
@@ -119,7 +161,7 @@ void placeBugs() {
     
     Tile tile = world[y][x];
     
-    if (tile.getFood() == null && tile.getBug() == null) {
+    if (tile.getFood() == null && tile.getNumberOfBugs() == 0) {
       Bug bug = new Bug(tile);
       
       bug.setTile(tile);
@@ -130,10 +172,11 @@ void placeBugs() {
       bugsPlaced++;
     }
   }
+  println("DONE.");
 }
 
-
 void moveBugs() {
+  print("Moving bugs...");
   ArrayList deadBugs = new ArrayList();
   
   for (int i = 0; i < bugs.size(); i++) {
@@ -150,8 +193,8 @@ void moveBugs() {
     Bug bug = (Bug) deadBugs.get(0);
     
     Tile tile = bug.getTile();
+    tile.bugLeaves(bug);
     bug.setTile(null);
-    tile.setBug(null);
     
     deadBugs.remove(0);
     bugs.remove(bug);
@@ -164,6 +207,8 @@ void moveBugs() {
   }
   
   if (delayInMillis > 0) delay(delayInMillis);
+  
+  println("DONE.");
 }
 
 void delay(int napTime) {
@@ -227,7 +272,9 @@ class CanvasPosition {
 
 public class Tile {
   Food food = null;
-  Bug bug = null;
+  //Bug bug = null;
+  
+  ArrayList bugs = new ArrayList();
 
   int col, row;
 
@@ -244,26 +291,38 @@ public class Tile {
     return food;
   }
 
+/*
   public void setBug(Bug bug) {
     this.bug = bug;
   }
+  */
 
-  public Bug getBug() {
-    return bug;
+  public Bug getBug(int number) {
+    return (Bug) this.bugs.get(number);
+    //return bug;
   }
   
-  public void bugLeaves() {
-    this.bug = null;
+  public int getNumberOfBugs() {
+    return bugs.size();
+  }
+  
+  public void bugLeaves(Bug bug) {
+    //this.bugs.remove(number);
+    bug.setTile(null);
+    this.bugs.remove(bug);
+    //this.bug = null;
   }
   
   public void bugArrives(Bug bug) {
-    this.bug = bug;
+    this.bugs.add(bug);
+    //this.bug = bug;
   }
   
   void display() {
-    if (getBug() != null) {
+    if (this.bugs.size() > 0) {
+      Bug bug = (Bug) this.bugs.get(0);
       
-      if (getBug().getEnergy() <= 0) {
+      if (bug.getEnergy() <= 0) {
         fill(255, 0, 0);
       }
       else {
@@ -447,7 +506,7 @@ public class Bug {
     energy--;
     
     Tile tile = getTile();
-    tile.bugLeaves();
+    tile.bugLeaves(this);
     tile.display();
     
     tile = world[cp.getY()][cp.getX()];
