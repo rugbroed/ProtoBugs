@@ -28,20 +28,17 @@
 // ****       'green'                            ****
 // ****    -  Bugs can be manually placed by     ****
 // ****       clicking with the mouse.           ****
+// ****    -  When two bugs are at the same tile ****
+// ****       and they got enough energy, they   ****
+// ****       will produce ofspring, spawning a  ****
+// ****       new bug and decreasing energy from ****
+// ****       the parent bugs.                   ****
 // ****                                          ****
 // ****  Features suggestions:                   ****
 // ****                                          ****
 // ****    1. Bugs should learn about their      ****
 // ****       surroundings, and incorporate      ****
 // ****       this in their DNA.                 ****
-// ****                                          ****
-// ****    2. If two bugs are at the same tile   ****
-// ****       and they energy levels are above   ****
-// ****       200 they should produce ofspring   ****
-// ****       and each should decrease 50 in     ****
-// ****       energy.                            ****
-// ****                                          ****
-// ****                                          ****
 // ****                                          ****
 // ****                                          ****
 // **************************************************
@@ -500,12 +497,20 @@ public class World {
       if (bug.getEnergy() == -50) {
         deadBugs.add(bug);
       }
-      /*
+
       if (bug.getTile().getNumberOfBugs() > 1) {
-        Bug bug1 = this.bugs.get(0);
-        Bug bug2 = this.bugs.get(1);
+        Bug bug1 = (Bug) this.bugs.get(0);
+        Bug bug2 = (Bug) this.bugs.get(1);
+        
+        if (bug1.getEnergy() > 100 && bug2.getEnergy() > 100) {
+          bug1.substractEnergy(50);
+          bug2.substractEnergy(50);
+          
+          println("A new bug was born!");
+          
+          addNewBug(bug.getTile());
+        }
       }
-      */
     }
     
     while (deadBugs.size() > 0) {
