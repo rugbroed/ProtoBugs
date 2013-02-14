@@ -188,7 +188,6 @@ public class Tile {
   
   public void bugArrives(Bug bug) {
     this.bugs.add(bug);
-    //this.bug = bug;
   }
   
   void display() {
@@ -490,7 +489,6 @@ public class World {
     placeFood();
     placeBugs();
     
-    //renderTiles();
     display();
   }
   
@@ -505,7 +503,6 @@ public class World {
   }
   
   public void moveBugs() {
-    print("Moving bugs...");
     ArrayList deadBugs = new ArrayList();
     
     for (int i = 0; i < bugs.size(); i++) {
@@ -516,6 +513,12 @@ public class World {
       if (bug.getEnergy() == -50) {
         deadBugs.add(bug);
       }
+      /*
+      if (bug.getTile().getNumberOfBugs() > 1) {
+        Bug bug1 = this.bugs.get(0);
+        Bug bug2 = this.bugs.get(1);
+      }
+      */
     }
     
     while (deadBugs.size() > 0) {
@@ -536,9 +539,5 @@ public class World {
     }
     
     if (delayInMillis > 0) delay(delayInMillis);
-    
-    println("DONE.");
   }
-  
-  
 }
