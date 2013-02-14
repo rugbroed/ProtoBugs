@@ -81,6 +81,12 @@ void mousePressed() {
 }
 
 void draw() {
+  if (keyPressed) {
+    if (key == 'f') {
+      world.placeFood();
+      world.display();
+    } 
+  }
   world.moveBugs();
 }
 
