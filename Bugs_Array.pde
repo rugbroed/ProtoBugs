@@ -52,26 +52,13 @@ import java.awt.event.*;
 
 int delayInMillis = 0;
 
-// Small setup
+int bugViewSize = 3;
+
 int canvasX = 100;
 int canvasY = 100;
 int tileSize = 10;
-int initialize_FOOD_AMOUNT = 200;
-int initialize_BUGS_AMOUNT = 250;
 
-// Huge setup
-/*
-int canvasX = 550;
-int canvasY = 550;
-int tileSize = 2;
-int initialize_FOOD_AMOUNT = 10000;
-int initialize_BUGS_AMOUNT = 10000;
-*/
-
-Tile[][] world = new Tile[canvasY][canvasX];
-ArrayList bugs = new ArrayList();
-
-int bugViewSize = 3;
+World world = new World();
 
 void setup() {
   background(128, 128, 128);
@@ -81,134 +68,20 @@ void setup() {
   size(canvasX * tileSize, canvasY * tileSize);
   frameRate(24);
 
-  makeWorld();
+  world.makeWorld();
 }
 
 void mousePressed() {
   int x = int(mouseY / tileSize);
   int y = int(mouseX / tileSize);
   
-  Tile tile = world[y][x];
-  Bug bug = new Bug(tile);
-  bugs.add(bug);
-
-  tile.bugArrives(bug);
-  tile.display();
+  //Tile tile = world[y][x];
+  Tile tile = world.getTile(y, x);
+  world.addNewBug(tile);
 }
 
 void draw() {
-  moveBugs();
-}
-
-void makeWorld() {
-  initializeWorld();
-  
-  placeFood();
-  placeBugs();
-  
-  renderTiles();
-}
-
-void renderTiles() {
-  for (int y = 0; y < canvasY; y++) {
-    for (int x = 0; x < canvasX; x++) {
-      
-      Tile tile = world[y][x];
-      tile.display();
-    }
-  }
-}
-
-void initializeWorld() {
-  print("Initializing world...");
-  for (int y = 0; y < canvasY; y++) {
-    for (int x = 0; x < canvasX; x++) {
-      
-      Tile tile = new Tile(y, x);
-      //Tile tile = new Tile();
-      world[y][x] = tile;
-      
-      tile.display();
-    }
-  }
-  println("DONE.");
-}
-
-void placeFood() {
-  print("Placing food...");
-  int foodPlaced = 0;
-  
-  while (foodPlaced < initialize_FOOD_AMOUNT) {
-    int y = int(random(canvasY));
-    int x = int(random(canvasX));
-
-    if (world[y][x].getFood() == null) {
-      Food food = new Food();
-      world[y][x].setFood(food);
-      foodPlaced++;
-    }
-  }
-  println("DONE.");
-}
-
-void placeBugs() {
-  print("Placing bugs...");
-  
-  int bugsPlaced = 0;
-  while (bugsPlaced < initialize_BUGS_AMOUNT) {
-    int y = int(random(canvasY));
-    int x = int(random(canvasX));
-    
-    Tile tile = world[y][x];
-    
-    if (tile.getFood() == null && tile.getNumberOfBugs() == 0) {
-      Bug bug = new Bug(tile);
-      
-      bug.setTile(tile);
-      bugs.add(bug);
-  
-      world[y][x].bugArrives(bug);
-      
-      bugsPlaced++;
-    }
-  }
-  println("DONE.");
-}
-
-void moveBugs() {
-  print("Moving bugs...");
-  ArrayList deadBugs = new ArrayList();
-  
-  for (int i = 0; i < bugs.size(); i++) {
-    Bug bug = (Bug) bugs.get(i);
-    
-    bug.move();
-    
-    if (bug.getEnergy() == -50) {
-      deadBugs.add(bug);
-    }
-  }
-  
-  while (deadBugs.size() > 0) {
-    Bug bug = (Bug) deadBugs.get(0);
-    
-    Tile tile = bug.getTile();
-    tile.bugLeaves(bug);
-    bug.setTile(null);
-    
-    deadBugs.remove(0);
-    bugs.remove(bug);
-    bug = null;
-    
-    Food food = new Food(100);
-    tile.setFood(food);
-    
-    tile.display();
-  }
-  
-  if (delayInMillis > 0) delay(delayInMillis);
-  
-  println("DONE.");
+  world.moveBugs();
 }
 
 void delay(int napTime) {
@@ -509,7 +382,8 @@ public class Bug {
     tile.bugLeaves(this);
     tile.display();
     
-    tile = world[cp.getY()][cp.getX()];
+    //tile = world[cp.getY()][cp.getX()];
+    tile = world.getTile(cp.getY(), cp.getX());
     tile.bugArrives(this);
 
     if (tile.getFood() != null) {
@@ -523,3 +397,148 @@ public class Bug {
   }
 }
 
+public class World {
+  // Small setup
+  int initialize_FOOD_AMOUNT = 200;
+  int initialize_BUGS_AMOUNT = 250;
+  
+  // Huge setup
+  /*
+  int canvasX = 550;
+  int canvasY = 550;
+  int tileSize = 2;
+  int initialize_FOOD_AMOUNT = 10000;
+  int initialize_BUGS_AMOUNT = 10000;
+  */
+  
+  Tile[][] world = new Tile[canvasY][canvasX];
+  ArrayList bugs = new ArrayList();
+  
+  public void addNewBug(Tile tile) {
+    Bug bug = new Bug(tile);
+    bugs.add(bug);
+  
+    tile.bugArrives(bug);
+    tile.display();
+  }
+  
+  void initializeWorld() {
+    print("Initializing world...");
+    for (int y = 0; y < canvasY; y++) {
+      for (int x = 0; x < canvasX; x++) {
+        
+        Tile tile = new Tile(y, x);
+        world[y][x] = tile;
+        
+        tile.display();
+      }
+    }
+    println("DONE.");
+  }
+  
+  public Tile getTile(int y, int x) {
+    Tile tile = this.world[y][x];
+    
+    return tile;
+  } 
+  
+  void placeFood() {
+    print("Placing food...");
+    int foodPlaced = 0;
+    
+    while (foodPlaced < initialize_FOOD_AMOUNT) {
+      int y = int(random(canvasY));
+      int x = int(random(canvasX));
+  
+      if (world[y][x].getFood() == null) {
+        Food food = new Food();
+        world[y][x].setFood(food);
+        foodPlaced++;
+      }
+    }
+    
+    println("DONE.");
+  }
+
+  void placeBugs() {
+    print("Placing bugs...");
+    
+    int bugsPlaced = 0;
+    while (bugsPlaced < initialize_BUGS_AMOUNT) {
+      int y = int(random(canvasY));
+      int x = int(random(canvasX));
+      
+      Tile tile = world[y][x];
+      
+      if (tile.getFood() == null && tile.getNumberOfBugs() == 0) {
+        Bug bug = new Bug(tile);
+        
+        bug.setTile(tile);
+        bugs.add(bug);
+    
+        world[y][x].bugArrives(bug);
+        
+        bugsPlaced++;
+      }
+    }
+    println("DONE.");
+  }
+  
+  public void makeWorld() {
+    initializeWorld();
+    
+    placeFood();
+    placeBugs();
+    
+    //renderTiles();
+    display();
+  }
+  
+  void display() {
+    for (int y = 0; y < canvasY; y++) {
+      for (int x = 0; x < canvasX; x++) {
+        
+        Tile tile = world[y][x];
+        tile.display();
+      }
+    }
+  }
+  
+  public void moveBugs() {
+    print("Moving bugs...");
+    ArrayList deadBugs = new ArrayList();
+    
+    for (int i = 0; i < bugs.size(); i++) {
+      Bug bug = (Bug) bugs.get(i);
+      
+      bug.move();
+      
+      if (bug.getEnergy() == -50) {
+        deadBugs.add(bug);
+      }
+    }
+    
+    while (deadBugs.size() > 0) {
+      Bug bug = (Bug) deadBugs.get(0);
+      
+      Tile tile = bug.getTile();
+      tile.bugLeaves(bug);
+      bug.setTile(null);
+      
+      deadBugs.remove(0);
+      bugs.remove(bug);
+      bug = null;
+      
+      Food food = new Food(100);
+      tile.setFood(food);
+      
+      tile.display();
+    }
+    
+    if (delayInMillis > 0) delay(delayInMillis);
+    
+    println("DONE.");
+  }
+  
+  
+}
