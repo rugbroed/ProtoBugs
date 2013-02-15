@@ -14,6 +14,7 @@
 // ****                                          ****
 // ****  Current functionality                   ****
 // ****                                          ****
+// ****    NON-INTERACTIVELY FUNCTIONALITY       ****
 // ****    -  Bugs are initialized and move      ****
 // ****       around randomly (energy: 100).     ****
 // ****    -  Bugs are 'white' if they have      ****
@@ -32,8 +33,11 @@
 // ****       new bug and decreasing energy from ****
 // ****       the parent bugs. Baby bugs are     ****
 // ****       blue.                              ****
-// ****    -  Baby bugs can be manually placed   **** 
-// ****       by clicking with the mouse.        ****
+// ****                                          ****
+// ****    INTERACTIVELY FUNCTIONALITY           ****
+// ****    -  [MOUSE CLICK] Baby bugs can be     **** 
+// ***        manually placed by clicking.       ****
+// ****    -  KEY 'F': Extra food can be seeded. ****
 // ****                                          ****
 // ****  Features suggestions:                   ****
 // ****                                          ****
