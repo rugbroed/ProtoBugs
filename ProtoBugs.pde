@@ -300,12 +300,9 @@ public class Food {
 
 public class Bug {
   int energy = 100;
-
-  Move lastMove = null;
-  
-  Tile tile;
-  
   int numberOfMovesToStayBaby = 0;
+  Move lastMove = null;
+  Tile tile;
   
   Bug(Tile tile) {
     this.tile = tile;
