@@ -299,13 +299,14 @@ public class Food {
 }
 
 public class Bug {
-  int energy = 100;
+  int energy = 0;
   int numberOfMovesToStayBaby = 0;
   Move lastMove = null;
   Tile tile;
   
   Bug(Tile tile) {
     this.tile = tile;
+    energy = int(random(50)) + 50;
   }
   
   public void setNumberOfMovesToStayBaby(int numberOfMovesToStayBaby) {
@@ -552,6 +553,9 @@ public class World {
         if (bug1.getEnergy() > 100 && bug2.getEnergy() > 100) {
           bug1.substractEnergy(50);
           bug2.substractEnergy(50);
+          
+          this.bugs.set(0, bug1);
+          this.bugs.set(1, bug2);
           
           addNewBug(bug.getTile(), true);
           
