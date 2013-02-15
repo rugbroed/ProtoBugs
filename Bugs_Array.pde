@@ -2,15 +2,20 @@
 // ****               PROTO BUGS                 ****
 // ****                                          ****
 // ****  Proto Bugs is free for non-commercial   ****
-// ****  use and further development. If you     ****
-// ****  like the idea, please help make it      ****
-// ****  better.                                 ****
+// ****  use. If you like the idea, please help  **** 
+// ****  make it better.                         ****
+// ****                                          ****
+// ****  ++ For project forks, please keep   ++  ****
+// ****  ++ the below message in the project ++  ****
+// ****  ++ header/description.              ++  ****
 // ****                                          ****
 // ****  Proto Bugs was originally made as an    ****
 // ****  inspiration for the students at a       ****
 // ****  course on interactivity at the          ****
 // ****  IT-University of Copenhagen             ****
-// ****  by kben@itu.dk.                         ****
+// ****  by Kasper (kben@itu.dk).                ****
+// ****                                          ****
+// ****                                          ****
 // ****                                          ****
 // ****  Current functionality                   ****
 // ****                                          ****
@@ -23,6 +28,9 @@
 // ****       are 'red'. If the energy level     ****
 // ****       drops below -50 they die, and      ****
 // ****       they turn into food.               ****
+// ****       Non-initialized baby bugs are      ****
+// ****       blue for some moves, so birth is   ****
+// ****       visual.                            ****
 // ****    -  Food are initialized and placed    ****
 // ****       randomly (energy: a random number  ****
 // ****       between 1 and 200). Food is        ****
@@ -415,7 +423,7 @@ public class Bug {
 
 public class World {
   // Small setup
-  int initialize_FOOD_AMOUNT = 200;
+  int initialize_FOOD_AMOUNT = 500;
   int initialize_BUGS_AMOUNT = 250;
   
   // Huge setup
