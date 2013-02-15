@@ -473,8 +473,10 @@ public class World {
   void placeFood() {
     print("Placing food...");
     int foodPlaced = 0;
+    int tryCounter = 0;
     
-    while (foodPlaced < initialize_FOOD_AMOUNT) {
+    while (foodPlaced < initialize_FOOD_AMOUNT && tryCounter < (initialize_FOOD_AMOUNT * 3)) {
+      tryCounter++;
       int y = int(random(canvasY));
       int x = int(random(canvasX));
   
