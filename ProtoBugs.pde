@@ -36,7 +36,10 @@
 // ****       between 1 and 200). Food is        ****
 // ****       'green'                            ****
 // ****    -  When two bugs are at the same tile ****
-// ****       and they got enough energy, they   ****
+// ****       and they got enough energy, and    ****
+// ****       they are both fertile (maning      ****
+// ****       that it is some moves since they   ****
+// ****       last gave offspring) they          ****
 // ****       will produce ofspring, spawning a  ****
 // ****       new bug and decreasing energy from ****
 // ****       the parent bugs. Baby bugs are     ****
@@ -197,10 +200,21 @@ public class Tile {
     this.bugs.add(bug);
   }
   
-  void display() {
-    if (this.bugs.size() > 0) {
-      Bug bug = (Bug) this.bugs.get(0);
+  Bug returnBaby() {
+    for (int i = 0; i < this.bugs.size(); i++) {
+      Bug bug = (Bug) this.bugs.get(i);
       
+      if (bug.isBaby()) return bug;
+    }
+    
+    return null;
+  }
+  
+  void display() {
+    Bug bug = returnBaby();
+    if (bug == null && this.bugs.size() > 0) bug = (Bug) this.bugs.get(0);
+   
+    if (bug != null) { 
       if (bug.getEnergy() <= 0) {
         fill(255, 0, 0);
       }
@@ -301,6 +315,8 @@ public class Food {
 public class Bug {
   int energy = 0;
   int numberOfMovesToStayBaby = 0;
+  int numberOfMovesToFertile = 0;
+  
   Move lastMove = null;
   Tile tile;
   
@@ -311,6 +327,14 @@ public class Bug {
   
   public void setNumberOfMovesToStayBaby(int numberOfMovesToStayBaby) {
     this.numberOfMovesToStayBaby = numberOfMovesToStayBaby;
+  }
+  
+  public void setNumberOfMovesToFertile(int numberOfMovesToFertile) {
+    this.numberOfMovesToFertile = numberOfMovesToFertile;
+  }
+  
+  public boolean isFertile() {
+    return (this.numberOfMovesToFertile == 0);
   }
   
   public boolean isBaby() {
@@ -412,10 +436,14 @@ public class Bug {
     if (numberOfMovesToStayBaby > 0) {
       numberOfMovesToStayBaby--;
     }
-
-    tile.display();
+    
+    if (numberOfMovesToFertile > 0) {
+      numberOfMovesToFertile--;
+    }
     
     setTile(tile);
+
+    tile.display();
   }
 }
 
@@ -550,9 +578,13 @@ public class World {
         Bug bug1 = (Bug) this.bugs.get(0);
         Bug bug2 = (Bug) this.bugs.get(1);
         
-        if (bug1.getEnergy() > 100 && bug2.getEnergy() > 100) {
+        // Offspring should only be produced when both bugs have enough energy, and none of the bugs are classified as a baby. 
+        if (bug1.getEnergy() > 100 && bug2.getEnergy() > 100 && !bug1.isBaby() && !bug2.isBaby() && bug1.isFertile() && bug2.isFertile()) {
           bug1.substractEnergy(50);
           bug2.substractEnergy(50);
+          
+          bug1.setNumberOfMovesToFertile(3);
+          bug2.setNumberOfMovesToFertile(3);
           
           this.bugs.set(0, bug1);
           this.bugs.set(1, bug2);
