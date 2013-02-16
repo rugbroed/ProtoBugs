@@ -49,6 +49,7 @@
 // ****    -  [MOUSE CLICK] Baby bugs can be     **** 
 // ***        manually placed by clicking.       ****
 // ****    -  KEY 'F': Extra food can be seeded. ****
+// ****    -  KEY 'P': Pauses.                   ****
 // ****                                          ****
 // ****  Features suggestions:                   ****
 // ****                                          ****
@@ -73,6 +74,8 @@ int bugViewSize = 3;
 int canvasX = 100;
 int canvasY = 100;
 int tileSize = 10;
+
+boolean pause = false;
 
 World world = new World();
 
@@ -100,9 +103,18 @@ void draw() {
     if (key == 'f') {
       world.placeFood();
       world.display();
-    } 
+    }
+    else {
+      if (key == 'p') {
+        pause = !pause;
+        delay(200);
+      }
+    }
   }
-  world.moveBugs();
+  
+  if (!pause) {
+    world.moveBugs();
+  }
 }
 
 void delay(int napTime) {
